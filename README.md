@@ -1,3 +1,4 @@
 # COMPAS Masonry
 
-COMPAS package for design and analysis of unreinforced masonry structures.
+Central code repository for the COMPAS Masonry project.
+For more information, please visit https://blockresearchgroup.gitbook.io/compas-masonry/
