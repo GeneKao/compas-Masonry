@@ -1,0 +1,30 @@
+{
+    "plugin": {
+        "id": "{4dc6be00-3832-449f-9c52-b544c3be1a3e}",
+        "version": "0.0.1.0",
+        "title": "COMPAS Masonry",
+        "copyright": "ETH Zurich",
+        "designers": [],
+        "developers": [
+            "Tom Van Mele",
+            "Antonino Iannuzzo",
+            "Alessandro Dell'Endice",
+            "Ricardo Avelino",
+            "Gene Kao"
+        ],
+        "documenters": [
+            "unknown :)"
+        ],
+        "license": "MIT License",
+        "logo": null,
+        "description": "...",
+        "website": "https://blockresearchgroup.gitbook.io/compas-masonry/"
+    },
+    "settings": {
+        "cloud": {
+            "background": true,
+            "port": 5003
+        }
+    },
+    "ui": {}
+}
