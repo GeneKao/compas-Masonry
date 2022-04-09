@@ -3,10 +3,38 @@ import compas_rhino
 from compas_ui.controller import Controller
 from compas_ui.ui import UI
 
+from compas_masonry.rhino.forms.scene import SceneObjectsForm
+
 
 class MasonryController(Controller):
     def __init__(self, ui):
         super(MasonryController, self).__init__(ui)
+
+    @UI.error()
+    def cloud_start(self):
+        from compas.rpc import Proxy
+
+        self.ui.proxy = Proxy()
+
+    @UI.error()
+    def cloud_restart(self):
+        if not self.ui.proxy:
+            self.cloud_start()
+        self.ui.proxy.restart_server()
+
+    @UI.error()
+    def scene_objects(self):
+        """Display a form with all objects in the scene.
+
+        Returns
+        -------
+        None
+
+        """
+        form = SceneObjectsForm(self.ui.scene)
+        if form.show():
+            self.ui.scene.update()
+            self.ui.record()
 
     @UI.error()
     def assembly_create(self):
@@ -92,11 +120,13 @@ class MasonryController(Controller):
         None
 
         """
-        # interface detection settings form
-        # send the data via the cloud
         objects = self.ui.scene.get(name="Assembly")
         if not objects:
             return
+
+        nmax = self.ui.settings["compas_assembly"]["identify_interfaces"]["nmax"]
+        tmax = self.ui.settings["compas_assembly"]["identify_interfaces"]["tmax"]
+        amin = self.ui.settings["compas_assembly"]["identify_interfaces"]["amin"]
 
         obj = objects[0]
         assembly = obj.assembly
@@ -104,8 +134,10 @@ class MasonryController(Controller):
         assembly_interfaces = self.ui.proxy.function(
             "compas_assembly.algorithms.assembly_interfaces_numpy"
         )
-        assembly = assembly_interfaces(assembly)
-        obj.assembly.data = assembly.data
+        # self.ui.proxy.package = "compas_assembly.algorithms"
+        # assembly_interfaces = self.ui.proxy.assembly_interfaces_numpy
+        assembly = assembly_interfaces(assembly, nmax=nmax, tmax=tmax, amin=amin)
+        obj.assembly = assembly
         self.ui.scene.update()
         self.ui.record()
 
@@ -132,8 +164,5 @@ class MasonryController(Controller):
         )
         if not path:
             return
-
-        # basename = os.path.basename(path)
-        # filename, ext = os.path.splitext(basename)
 
         assembly.to_json(path)

@@ -19,11 +19,11 @@ class AssemblyObject(Object):
         "show.loads": False,
         "show.selfweight": False,
         "show.forces": False,
-        "color.nodes": Color.white(),
-        "color.edges": Color.black(),
-        # "color.reactions": Color.green().darkened(50),
-        # "color.selfweight": Color.magenta(),
-        # "color.loads": Color.green().darkened(75),
+        "color.nodes": Color.from_hex("#0092d2"),
+        "color.edges": Color.white(),
+        "color.selfweight": Color.magenta(),
+        "color.reactions": Color.green().darkened(50),
+        "color.forces": Color.blue(),
     }
 
     def __init__(self, *args, **kwargs):

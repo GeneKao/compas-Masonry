@@ -24,6 +24,13 @@
         "cloud": {
             "background": true,
             "port": 5003
+        },
+        "compas_assembly": {
+            "identify_interfaces": {
+                "nmax": 10,
+                "tmax": 0.1,
+                "amin": 0.001
+            }
         }
     },
     "ui": {}

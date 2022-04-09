@@ -5,7 +5,7 @@ def RunCommand(is_interactive):
     from compas_ui.ui import UI
 
     ui = UI()
-    ui.scene_objects()
+    ui.controller.scene_objects()
 
 
 if __name__ == "__main__":

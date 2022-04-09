@@ -95,15 +95,27 @@ class RhinoAssemblyObject(RhinoObject, AssemblyObject):
 
         if self.settings["show.blocks"]:
             blocks = list(self.assembly.blocks())
-            guids = self.artist.draw_blocks()
+            guids = self.artist.draw_blocks(color=self.settings["color.nodes"])
             self.guids += guids
             self.guid_block = zip(guids, blocks)
 
         if self.settings["show.interfaces"]:
             interfaces = list(self.assembly.interfaces())
-            guids = self.artist.draw_interfaces()
+            guids = self.artist.draw_interfaces(color=self.settings["color.edges"])
             self.guids += guids
             self.guid_interface = zip(guids, interfaces)
+
+        if self.settings["show.selfweight"]:
+            guids = self.artist.draw_selfweight(color=self.settings["color.selfweight"])
+            self.guids += guids
+
+        # if self.settings["show.reactions"]:
+        #     guids = self.artist.draw_reactions(color=self.settings["color.reactions"])
+        #     self.guids += guids
+
+        # if self.settings["show.forces"]:
+        #     guids = self.artist.draw_forces(color=self.settings["color.forces"])
+        #     self.guids += guids
 
     def select_nodes(self):
         """Select nodes of the network.

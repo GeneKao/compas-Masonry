@@ -11,13 +11,12 @@ def RunCommand(is_interactive):
 
     text = "Bootstrapper"
     text += "\n" + "-" * len(text) + "\n"
-    text += "\n".join(
-        [
-            "{}: {}".format(name, getattr(bc, name))
-            for name in dir(bc)
-            if not name.startswith("_")
-        ]
-    )
+
+    for name in dir(bc):
+        text += "\n\n{}".format(name)
+        text += "\n"
+        text += " " * 7
+        text += "{}".format(getattr(name, bc))
 
     form = InfoForm(text=text)
     form.show()
