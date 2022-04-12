@@ -1,4 +1,4 @@
-__commandname__ = "Masonry_scene_update"
+__commandname__ = "Masonry_scene_redraw"
 
 
 def RunCommand(is_interactive):

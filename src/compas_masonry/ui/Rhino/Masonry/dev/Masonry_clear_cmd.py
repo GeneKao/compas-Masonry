@@ -1,4 +1,4 @@
-__commandname__ = "Masonry_scene_clear"
+__commandname__ = "Masonry_clear"
 
 
 def RunCommand(is_interactive):
