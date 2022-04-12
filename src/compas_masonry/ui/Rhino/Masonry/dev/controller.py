@@ -144,6 +144,28 @@ class MasonryController(Controller):
         assembly.to_json(path)
 
     @UI.error()
+    def assembly_import(self):
+        """Import an assembly from JSON.
+
+        Returns
+        -------
+        None
+
+        """
+        from compas_assembly.datastructures import Assembly
+        from compas_ui.rhino.forms import FileForm
+
+        path = FileForm.open(dirname=self.ui.dirname or os.path.expanduser("~"))
+        if not path:
+            return
+
+        assembly = Assembly.from_json(path)
+        self.ui.scene.clear()
+        self.ui.scene.add(assembly)
+        self.ui.scene.update()
+        self.ui.record()
+
+    @UI.error()
     def assembly_equilibrium(self):
         """Compute the state of equilibrium of the model.
 
@@ -172,15 +194,10 @@ class MasonryController(Controller):
             params = self.ui.settings["compas_rbe"]["compute_interface_forces_cvx"]
 
         elif option == "CRA":
-            pass
+            function = self.proxy.function("compas_cra.equilibrium.cra_pyomo.cra_solve")
+            params = self.ui.settings["compas_cra"]["cra_solve"]
 
         elif option == "PRD":
-            pass
-
-        elif option == "3DEC":
-            pass
-
-        elif option == "FEA2":
             pass
 
         else:
