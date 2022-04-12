@@ -41,6 +41,16 @@
                 "maxiters": 1000,
                 "solver": null
             }
+        },
+        "compas_cra": {
+            "cra_solve": {
+                "friction8": false,
+                "mu": 0.6,
+                "density": 1.0,
+                "verbose": false,
+                "maxiters": 1000,
+                "solver": null
+            }
         }
     },
     "ui": {}
