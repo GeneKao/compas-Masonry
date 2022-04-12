@@ -11,18 +11,6 @@ class MasonryController(Controller):
         super(MasonryController, self).__init__(ui)
 
     @UI.error()
-    def cloud_start(self):
-        from compas.rpc import Proxy
-
-        self.ui.proxy = Proxy()
-
-    @UI.error()
-    def cloud_restart(self):
-        if not self.ui.proxy:
-            self.cloud_start()
-        self.ui.proxy.restart_server()
-
-    @UI.error()
     def scene_objects(self):
         """Display a form with all objects in the scene.
 
@@ -48,13 +36,13 @@ class MasonryController(Controller):
         from compas_assembly.datastructures import Assembly
         from compas_ui.rhino.forms import FileForm
 
-        options = ["FromFile", "FromMeshes", "FromPolySurfaces", "FromTemplate"]
-        option = compas_rhino.rs.GetString("Create an assembly", strings=options)
+        options = ["File", "Meshes", "PolySurfaces", "Template"]
+        option = compas_rhino.rs.GetString("Create an assembly from", strings=options)
 
         if not option:
             return
 
-        if option == "FromFile":
+        if option == "File":
             path = FileForm.open(self.ui.dirname or os.path.expanduser("~"))
             if not path:
                 return
@@ -70,12 +58,10 @@ class MasonryController(Controller):
                 raise NotImplementedError
             elif ext == ".json":
                 assembly = Assembly.from_json(path)
-                # assembly.name = basename
-
             else:
                 raise NotImplementedError
 
-        elif option == "FromMeshes":
+        elif option == "Meshes":
             guids = compas_rhino.select_meshes()
             if not guids:
                 return
@@ -83,7 +69,7 @@ class MasonryController(Controller):
             assembly = Assembly()
             assembly.add_blocks_from_rhinomeshes(guids)
 
-        elif option == "FromPolySurfaces":
+        elif option == "PolySurfaces":
             guids = compas_rhino.select_surfaces()
             if not guids:
                 return
@@ -91,20 +77,11 @@ class MasonryController(Controller):
             assembly = Assembly()
             assembly.add_blocks_from_polysurfaces(guids)
 
-        elif option == "FromTemplate":
+        elif option == "Template":
             raise NotImplementedError
 
         else:
             raise NotImplementedError
-
-        # name = self.ui.get_string("Name?", default=assembly.name)
-        # if not name:
-        #     name = assembly.name
-
-        # objects = self.ui.scene.get(name)
-        # if objects:
-        #     for obj in objects:
-        #         self.ui.scene.remove(obj)
 
         self.ui.scene.clear()
         self.ui.scene.add(assembly, name=assembly.name)
@@ -134,9 +111,8 @@ class MasonryController(Controller):
         assembly_interfaces = self.ui.proxy.function(
             "compas_assembly.algorithms.assembly_interfaces_numpy"
         )
-        # self.ui.proxy.package = "compas_assembly.algorithms"
-        # assembly_interfaces = self.ui.proxy.assembly_interfaces_numpy
         assembly = assembly_interfaces(assembly, nmax=nmax, tmax=tmax, amin=amin)
+
         obj.assembly = assembly
         self.ui.scene.update()
         self.ui.record()
@@ -166,3 +142,55 @@ class MasonryController(Controller):
             return
 
         assembly.to_json(path)
+
+    @UI.error()
+    def assembly_equilibrium(self):
+        """Compute the state of equilibrium of the model.
+
+        Returns
+        -------
+        None
+
+        """
+        objects = self.ui.scene.get(name="Assembly")
+        if not objects:
+            return
+
+        obj = objects[0]
+        assembly = obj.assembly
+
+        options = ["RBE", "CRA", "PRD", "3DEC", "FEA2"]
+        option = compas_rhino.rs.GetString("3D equilibrium solver", strings=options)
+
+        if not option:
+            return
+
+        if option == "RBE":
+            function = self.proxy.function(
+                "compas_rbe.equilibrium.interfaceforces_cvx.compute_interface_forces_cvx"
+            )
+            params = self.ui.settings["compas_rbe"]["compute_interface_forces_cvx"]
+
+        elif option == "CRA":
+            pass
+
+        elif option == "PRD":
+            pass
+
+        elif option == "3DEC":
+            pass
+
+        elif option == "FEA2":
+            pass
+
+        else:
+            raise NotImplementedError
+
+        if not function:
+            return
+
+        assembly = function(assembly, **params)
+
+        obj.assembly = assembly
+        self.ui.scene.update()
+        self.ui.record()
