@@ -31,6 +31,16 @@
                 "tmax": 0.1,
                 "amin": 0.001
             }
+        },
+        "compas_rbe": {
+            "compute_interface_forces_cvx": {
+                "friction8": false,
+                "mu": 0.6,
+                "density": 1.0,
+                "verbose": false,
+                "maxiters": 1000,
+                "solver": null
+            }
         }
     },
     "ui": {}
